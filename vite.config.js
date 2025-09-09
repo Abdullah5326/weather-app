@@ -6,5 +6,5 @@ import eslint from "vite-plugin-eslint";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), eslint()],
-  base: "/weather-app/",
+  base: "/",
 });
