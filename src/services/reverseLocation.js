@@ -1,5 +1,5 @@
 const API_KEY = "1c7acf7133529f88a419b54f57a9b0e4";
-const url = "http://api.openweathermap.org/geo/1.0/";
+const url = "https://api.openweathermap.org/geo/1.0/";
 
 export async function getCurrentCoords() {
   return new Promise((resolve, reject) => {
