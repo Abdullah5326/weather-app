@@ -1,5 +1,12 @@
+import Applayout from "./components/Applayout";
+import { useSettings } from "./contexts/SettingsContext";
+import { useGetWeatherData } from "./hooks/useGetWeatherData";
+
 function App() {
-  return <h1 className="bg-stone-600 text-4xl text-white py-5">Weather app</h1>;
+  const { appWeatherData } = useSettings();
+  const { isPending } = useGetWeatherData(null);
+  if (isPending || !appWeatherData) return <p>Loading..</p>;
+  return <Applayout />;
 }
 
 export default App;
