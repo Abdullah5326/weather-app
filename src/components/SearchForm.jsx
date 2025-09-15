@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { getCoordsByLocation } from "../services/reverseLocation";
 import { useSettings } from "../contexts/SettingsContext";
+import { getForcast } from "../services/forcast";
 
 function SearchForm() {
   const [searchCity, setSearchCity] = useState("");
-  const [coords, setCoords] = useState(null);
   const { addAppWeatherData } = useSettings();
-
   async function handleSubmit(e) {
     e.preventDefault();
     if (!searchCity) return;
     const coords = await getCoordsByLocation(searchCity);
     const { lat, lon: lng } = coords[0];
-    setCoords({ lat, lng });
-    console.log(lat, lng);
+    const data = await getForcast({ lat, lng });
+    addAppWeatherData(data);
   }
   return (
     <form className="flex flex-col sm:flex-row sm:justify-center gap-4 w-full items-center ">

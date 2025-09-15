@@ -2,12 +2,13 @@ import { fetchWeatherApi } from "openmeteo";
 import { getCurrentCoords, getLocationByCoords } from "./reverseLocation";
 
 export async function getForcast(position) {
-  console.log(position, "posiS");
-  const userLocation = await getLocationByCoords();
-  const { name: cityName, state: province } = userLocation[0];
   const coords = !position ? await getCurrentCoords() : null;
+  const userLocation = !position
+    ? await getLocationByCoords(coords)
+    : await getLocationByCoords(position);
+  const { name: cityName, state: province } = userLocation[0];
   const params = {
-    latitude: !position ? [coords.lat] : [position.lat],
+    latitude: !position ? [coords.lng] : [position.lat],
     longitude: !position ? [coords.lng] : [position.lng],
     current:
       "temperature_2m,weather_code,wind_speed_10m,precipitation,relative_humidity_2m",
@@ -95,7 +96,6 @@ export async function getForcast(position) {
       cityName,
       province,
     };
-
     return newAppWeatherData;
   }
 

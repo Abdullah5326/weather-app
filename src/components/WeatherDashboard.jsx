@@ -1,4 +1,4 @@
-import DailyForcastDetails from "./DailyForcastDetails";
+import DailyForcastDetails from "./WeeklyForcastDetails";
 import MainWeatherDashboard from "./MainWeatherDashboard";
 import SecondryWeatherDashboards from "./SecondryWeatherDashboards";
 

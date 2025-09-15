@@ -16,8 +16,7 @@ export async function getCurrentCoords() {
   });
 }
 
-export async function getLocationByCoords() {
-  const coords = await getCurrentCoords();
+export async function getLocationByCoords(coords) {
   const res = await fetch(
     `${url}reverse?lat=${coords.lat}&lon=${
       coords.lng

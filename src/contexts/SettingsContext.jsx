@@ -7,6 +7,7 @@ const initialState = {
   windSpeedUnit: "km/h",
   precipitationUnit: "mm",
   appWeatherData: null,
+  isCityWeatherData: false,
 };
 
 function reducer(state, action) {
