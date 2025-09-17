@@ -3,12 +3,13 @@ import SecondryWeatherDetails from "./SecondryWeatherDetails";
 
 function SecondryWeatherDashboards() {
   const { appWeatherData, windSpeedUnit, precipitationUnit } = useSettings();
-  const { temperature, windSpeed, precipitation, humidity } = appWeatherData;
+  const { windSpeed, precipitation, humidity, apparentTemperature } =
+    appWeatherData;
   return (
     <ul className="grid grid-cols-2 sm:grid-cols-4 justify-start gap-4 w-full mb-10 sm:mb-6">
       <SecondryWeatherDetails>
         <p className="text-stone-300 text-sm">Feels like</p>
-        <p className="text-xl">{Math.round(temperature)}&deg; </p>
+        <p className="text-xl">{Math.round(apparentTemperature)}&deg; </p>
       </SecondryWeatherDetails>
       <SecondryWeatherDetails>
         <p className="text-stone-300 text-sm">Humidity</p>

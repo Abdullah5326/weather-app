@@ -11,7 +11,7 @@ export async function getForcast(position) {
     latitude: !position ? [coords.lng] : [position.lat],
     longitude: !position ? [coords.lng] : [position.lng],
     current:
-      "temperature_2m,weather_code,wind_speed_10m,precipitation,relative_humidity_2m",
+      "temperature_2m,weather_code,wind_speed_10m,precipitation,relative_humidity_2m,apparent_temperature,",
     hourly: "temperature_2m,weather_code",
     daily: "weather_code,temperature_2m_max,temperature_2m_min",
   };
@@ -39,6 +39,7 @@ export async function getForcast(position) {
         windSpeed: current.variables(2).value(),
         precipitation: current.variables(3).value(),
         humidity: current.variables(4).value(),
+        apparentTemperature: current.variables(5).value(),
       },
       hourly: {
         time: range(
@@ -67,6 +68,7 @@ export async function getForcast(position) {
       windSpeed,
       time: currentTime,
       precipitation,
+      apparentTemperature,
     } = weatherData?.current;
 
     const {
@@ -85,6 +87,7 @@ export async function getForcast(position) {
       humidity,
       windSpeed,
       currentTime,
+      apparentTemperature,
       precipitation,
       daysTime,
       temperatureMax,
