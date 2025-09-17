@@ -16,7 +16,7 @@ function MainWeatherDashboard() {
           <img src="bg-today-small.svg" alt="cclogo" />
         </picture>
         <div className=" w-full  px-8 absolute grid grid-cols-1 h-full top-8">
-          <div className="text-center sm:text-left sm:absolute sm:top-[50%]  sm:-translate-y-[100%] sm:left-5">
+          <div className="text-center sm:text-left sm:absolute sm:top-[50%]  sm:-translate-y-[100%] sm:left-5 sm:max-w-[50%]">
             <p className="font-semibold text-xl sm:text-xl">
               {cityName.split(" ")[0]}, {province}
             </p>
