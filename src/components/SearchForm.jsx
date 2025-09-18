@@ -2,21 +2,38 @@ import { useState } from "react";
 import { getCoordsByLocation } from "../services/reverseLocation";
 import { useSettings } from "../contexts/SettingsContext";
 import { getForcast } from "../services/forcast";
+import { useNavigate } from "react-router-dom";
 
 function SearchForm() {
   const [searchCity, setSearchCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { addAppWeatherData } = useSettings();
+  const navigate = useNavigate();
+
   async function handleSubmit(e) {
-    e.preventDefault();
-    if (!searchCity) return;
-    setSearchCity("");
-    setIsLoading(true);
-    const coords = await getCoordsByLocation(searchCity);
-    const { lat, lon: lng } = coords[0];
-    const data = await getForcast({ lat, lng });
-    addAppWeatherData(data);
-    setIsLoading(false);
+    try {
+      e.preventDefault();
+      if (!searchCity) return;
+
+      setSearchCity("");
+      setIsLoading(true);
+
+      const coordsPromise = getCoordsByLocation(searchCity);
+      const newPomise = new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error("Your internet connection is to slow!")),
+          10000
+        );
+      });
+      const coords = await Promise.race([newPomise, coordsPromise]);
+      const { lat, lon: lng } = coords[0];
+      const data = await getForcast({ lat, lng });
+      addAppWeatherData(data);
+      setIsLoading(false);
+    } catch {
+      console.log("Your internet connect is too slow");
+      navigate("/errorPage");
+    }
   }
   return (
     <div className="max-w-130 flex flex-col gap-3  w-full relative">
@@ -45,7 +62,7 @@ function SearchForm() {
       </form>
       {isLoading && (
         <div className="bg-neutral-800 max-w-106 rounded-md  w-full h-10 absolute top-13 z-1 px-4 flex items-center gap-2">
-          <div class="spinner"></div>
+          <div className="spinner"></div>
           <span className="text-sm font-semibold">Search in progress</span>
         </div>
       )}

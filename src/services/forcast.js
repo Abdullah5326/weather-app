@@ -1,90 +1,66 @@
-import { fetchWeatherApi } from "openmeteo";
 import { getCurrentCoords, getLocationByCoords } from "./reverseLocation";
 
-export async function getForcast(position) {
+async function getPosition(position) {
   const coords = !position ? await getCurrentCoords() : null;
   const userLocation = !position
     ? await getLocationByCoords(coords)
     : await getLocationByCoords(position);
   const { name: cityName, state: province } = userLocation[0];
-  const params = {
-    latitude: !position ? [coords.lng] : [position.lat],
-    longitude: !position ? [coords.lng] : [position.lng],
-    current:
-      "temperature_2m,weather_code,wind_speed_10m,precipitation,relative_humidity_2m,apparent_temperature,",
-    hourly: "temperature_2m,weather_code",
-    daily: "weather_code,temperature_2m_max,temperature_2m_min",
-  };
+  const latitude = !position ? [coords.lng] : [position.lat];
+  const longitude = !position ? [coords.lng] : [position.lng];
+  return { latitude, longitude, cityName, province };
+}
 
-  const url = "https://api.open-meteo.com/v1/forecast";
+export async function getForcast(position) {
+  try {
+    const { latitude, longitude, cityName, province } = await getPosition(
+      position
+    );
 
-  async function getWeather() {
-    const responses = await fetchWeatherApi(url, params);
-    const response = responses[0];
+    const url = "https://api.open-meteo.com/v1/forecast";
+    const currentParams = `current=temperature_2m,precipitation,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m`;
+    const weeklyParams = `daily=weather_code,temperature_2m_max,temperature_2m_min`;
+    const hourlyParams = `hourly=temperature_2m,weather_code&`;
 
-    const utcOffsetSeconds = response.utcOffsetSeconds();
+    const res = await fetch(
+      `${url}?latitude=${latitude}&longitude=${longitude}&${hourlyParams}&${weeklyParams}&${currentParams}`
+    );
 
-    const current = response.current();
-    const hourly = response.hourly();
-    const daily = response.daily();
+    if (!res.ok)
+      throw new Error(
+        "There is an error in fetching forcast of the city",
+        res.status
+      );
 
-    const range = (start, stop, step) =>
-      Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
-
-    const weatherData = {
-      current: {
-        time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
-        temperature: current.variables(0).value(),
-        weatherCode: current.variables(1).value(),
-        windSpeed: current.variables(2).value(),
-        precipitation: current.variables(3).value(),
-        humidity: current.variables(4).value(),
-        apparentTemperature: current.variables(5).value(),
-      },
-      hourly: {
-        time: range(
-          Number(hourly.time()),
-          Number(hourly.timeEnd()),
-          hourly.interval()
-        ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
-        temperature: hourly.variables(0).valuesArray(),
-        weatherCode: hourly.variables(1).valuesArray(),
-      },
-      daily: {
-        time: range(
-          Number(daily.time()),
-          Number(daily.timeEnd()),
-          daily.interval()
-        ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
-        weatherCode: daily.variables(0).valuesArray(),
-        temperatureMax: daily.variables(1).valuesArray(),
-        temperatureMin: daily.variables(2).valuesArray(),
-      },
-    };
+    const data = await res.json();
+    const { current, hourly, daily } = data;
 
     const {
-      temperature,
-      humidity,
-      windSpeed,
+      temperature_2m: temperature,
+      weather_code: currentWeatherCode,
+      wind_speed_10m: windSpeed,
+      relative_humidity_2m: humidity,
+      apparent_temperature: apparentTemperature,
       time: currentTime,
       precipitation,
-      apparentTemperature,
-    } = weatherData?.current;
+    } = current;
+    const {
+      temperature_2m: hourTemperatures,
+      weather_code: hourlyWeatherCodes,
+      time: hours,
+    } = hourly;
 
     const {
+      weather_code: weeklyWeatherCodes,
+      temperature_2m_max: temperatureMax,
+      temperature_2m_min: temperatureMin,
       time: daysTime,
-      temperatureMax,
-      temperatureMin,
-      weatherCode: weeklyWeatherCodes,
-    } = weatherData?.daily;
-    const {
-      time: hours,
-      temperature: hourTemperatures,
-      weatherCode: hourlyWeatherCodes,
-    } = weatherData.hourly;
+    } = daily;
+
     const newAppWeatherData = {
       temperature,
       humidity,
+      currentWeatherCode,
       windSpeed,
       currentTime,
       apparentTemperature,
@@ -100,7 +76,9 @@ export async function getForcast(position) {
       province,
     };
     return newAppWeatherData;
-  }
+  } catch (err) {
+    console.log(err.message, err.status);
 
-  return getWeather();
+    throw new Error(err.message);
+  }
 }

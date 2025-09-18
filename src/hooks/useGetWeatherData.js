@@ -5,7 +5,11 @@ import { useSettings } from "../contexts/SettingsContext";
 
 export function useGetWeatherData(position) {
   const { addAppWeatherData } = useSettings();
-  const { data: weatherData, isPending } = useQuery({
+  const {
+    data: weatherData,
+    isPending,
+    error: forcastError,
+  } = useQuery({
     queryKey: ["weatherData"],
     queryFn: () => getForcast(position),
   });
@@ -14,5 +18,5 @@ export function useGetWeatherData(position) {
     if (!weatherData) return;
     addAppWeatherData(weatherData);
   }, [addAppWeatherData, weatherData]);
-  return { weatherData, isPending };
+  return { weatherData, isPending, forcastError };
 }

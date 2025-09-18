@@ -11,3 +11,9 @@ export function formatDate(date) {
   ).format(newDate);
   return formattedDate;
 }
+
+export async function isApiError(res) {
+  if (!res.ok) {
+    throw new Error(`API error ${res.status}`);
+  }
+}

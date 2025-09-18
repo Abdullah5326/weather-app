@@ -11,11 +11,11 @@ function DailyForcastDetails() {
       <ul className="flex gap-2  flex-wrap">
         {daysTime.map((date, i) => (
           <WeeklyForcastBox
-            date={date}
+            date={new Date(date)}
             maxTemp={temperatureMax[i]}
             minTemp={temperatureMin[i]}
             weatherCode={weeklyWeatherCodes[i]}
-            key={date.getDate()}
+            key={new Date(date).getDate()}
           />
         ))}
       </ul>

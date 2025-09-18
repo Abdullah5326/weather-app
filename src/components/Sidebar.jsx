@@ -14,10 +14,10 @@ function Sidebar() {
       <ul className="space-y-2 overflow-auto h-105 border-b-20 border-neutral-800 ">
         {hours24.map((date, i) => (
           <HourlyWeatherRow
-            date={date}
+            date={new Date(date)}
             temp={hour24Temperatures[i]}
             weatherCode={hourlyWeatherCodes[i]}
-            key={date.getHours()}
+            key={new Date(date).getHours()}
           />
         ))}
       </ul>

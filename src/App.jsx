@@ -1,13 +1,16 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Applayout from "./components/Applayout";
-import LoadingAppLayout from "./components/LoadingAppLayout.";
-import { useSettings } from "./contexts/SettingsContext";
-import { useGetWeatherData } from "./hooks/useGetWeatherData";
+import ErrorPage from "./components/ErrorPage";
 
 function App() {
-  const { appWeatherData } = useSettings();
-  const { isPending } = useGetWeatherData(null);
-  if (isPending || !appWeatherData) return <LoadingAppLayout />;
-  return <Applayout />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Applayout />} />
+        <Route path="/errorPage" element={<ErrorPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;

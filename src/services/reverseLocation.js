@@ -1,3 +1,5 @@
+import { isApiError } from "../utils/helpers";
+
 const API_KEY = "1c7acf7133529f88a419b54f57a9b0e4";
 const url = "https://api.openweathermap.org/geo/1.0/";
 
@@ -17,17 +19,28 @@ export async function getCurrentCoords() {
 }
 
 export async function getLocationByCoords(coords) {
-  const res = await fetch(
-    `${url}reverse?lat=${coords.lat}&lon=${
-      coords.lng
-    }&limit=${1}&appid=${API_KEY}`
-  );
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(
+      `${url}reverse?lat=${coords.lat}&lon=${
+        coords.lng
+      }&limit=${1}&appid=${API_KEY}`
+    );
+    isApiError(res);
+    const data = await res.json();
+    return data;
+  } catch {
+    throw new Error("There is an error in get location by coords");
+  }
 }
 
 export async function getCoordsByLocation(cityName) {
-  const res = await fetch(`${url}direct?q=${cityName}&appid=${API_KEY}`);
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(`${url}direct?q=${cityName}&appid=${API_KEY}`);
+    isApiError(res);
+    const data = await res.json();
+    return data;
+  } catch {
+    console.log("yes it comes");
+    throw new Error("There is an error in getCoordsByLocation");
+  }
 }

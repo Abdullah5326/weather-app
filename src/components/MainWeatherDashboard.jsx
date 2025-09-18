@@ -10,14 +10,14 @@ function MainWeatherDashboard() {
         <picture>
           <source
             media="(min-width: 640px)"
-            srcset="bg-today-large.svg"
+            srcSet="bg-today-large.svg"
             className="h-full"
           />
           <img src="bg-today-small.svg" alt="cclogo" />
         </picture>
         <div className=" w-full  px-8 absolute grid grid-cols-1 h-full top-8">
           <div className="text-center sm:text-left sm:absolute sm:top-[50%]  sm:-translate-y-[100%] sm:left-5 sm:max-w-[50%]">
-            <p className="font-semibold text-xl sm:text-2xl sm:text-xl">
+            <p className="font-semibold text-xl sm:text-2xl">
               {cityName.split(" ")[0]}, {province}
             </p>
             <p className="text-sm text-stone-300">{formatDate(currentTime)}</p>
