@@ -7,16 +7,17 @@ import { useNavigate } from "react-router-dom";
 function SearchForm() {
   const [searchCity, setSearchCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { addAppWeatherData } = useSettings();
+  const { addAppWeatherData, appWeatherData } = useSettings();
+  const { cityName } = appWeatherData;
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     try {
       e.preventDefault();
       if (!searchCity) return;
-
-      setSearchCity("");
       setIsLoading(true);
+      setSearchCity("");
+      navigate("/");
 
       const coordsPromise = getCoordsByLocation(searchCity);
       const newPomise = new Promise((_, reject) => {
@@ -26,13 +27,14 @@ function SearchForm() {
         );
       });
       const coords = await Promise.race([newPomise, coordsPromise]);
+
       const { lat, lon: lng } = coords[0];
       const data = await getForcast({ lat, lng });
       addAppWeatherData(data);
       setIsLoading(false);
-    } catch {
-      console.log("Your internet connect is too slow");
-      navigate("/errorPage");
+    } catch (err) {
+      console.log(err.message);
+      navigate("/noSearchResults");
     }
   }
   return (

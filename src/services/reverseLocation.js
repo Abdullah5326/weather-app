@@ -41,6 +41,6 @@ export async function getCoordsByLocation(cityName) {
     return data;
   } catch {
     console.log("yes it comes");
-    throw new Error("There is an error in getCoordsByLocation");
+    return new Error("There is an error in getCoordsByLocation");
   }
 }

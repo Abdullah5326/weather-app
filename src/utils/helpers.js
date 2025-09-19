@@ -14,6 +14,6 @@ export function formatDate(date) {
 
 export async function isApiError(res) {
   if (!res.ok) {
-    throw new Error(`API error ${res.status}`);
+    new Error(`API error ${res.status}`);
   }
 }
