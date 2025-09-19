@@ -35,12 +35,14 @@ export async function getLocationByCoords(coords) {
 
 export async function getCoordsByLocation(cityName) {
   try {
-    const res = await fetch(`${url}direct?q=${cityName}&appid=${API_KEY}`);
-    isApiError(res);
+    const res = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${cityName}&count=1`
+    );
     const data = await res.json();
-    return data;
-  } catch {
-    console.log("yes it comes");
+
+    return data.results[0];
+  } catch (err) {
+    console.error(err.message);
     return new Error("There is an error in getCoordsByLocation");
   }
 }

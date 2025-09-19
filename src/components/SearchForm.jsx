@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getCoordsByLocation } from "../services/reverseLocation";
 import { useSettings } from "../contexts/SettingsContext";
 import { getForcast } from "../services/forcast";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 function SearchForm() {
   const [searchCity, setSearchCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { addAppWeatherData, appWeatherData } = useSettings();
-  const { cityName } = appWeatherData;
+  const { addAppWeatherData } = useSettings();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -16,21 +14,15 @@ function SearchForm() {
       e.preventDefault();
       if (!searchCity) return;
       setIsLoading(true);
-      setSearchCity("");
-      navigate("/");
 
-      const coordsPromise = getCoordsByLocation(searchCity);
-      const newPomise = new Promise((_, reject) => {
-        setTimeout(
-          () => reject(new Error("Your internet connection is to slow!")),
-          10000
-        );
-      });
-      const coords = await Promise.race([newPomise, coordsPromise]);
+      if (window.location.pathname === "/noSearchResults") {
+        console.log("it works");
+        navigate("/");
+      }
 
-      const { lat, lon: lng } = coords[0];
-      const data = await getForcast({ lat, lng });
+      const data = await getForcast(searchCity);
       addAppWeatherData(data);
+      setSearchCity("");
       setIsLoading(false);
     } catch (err) {
       console.log(err.message);

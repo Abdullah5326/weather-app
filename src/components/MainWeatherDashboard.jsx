@@ -1,9 +1,12 @@
 import { useSettings } from "../contexts/SettingsContext";
+import { findWeatherIcon } from "../services/findWeatherIcon";
 import { formatDate } from "../utils/helpers";
 
 function MainWeatherDashboard() {
   const { appWeatherData } = useSettings();
-  const { temperature, currentTime, cityName, province } = appWeatherData;
+  const { temperature, currentTime, cityName, country, currentWeatherCode } =
+    appWeatherData;
+  const weatherIcon = findWeatherIcon(currentWeatherCode);
   return (
     <div className="  self-center ">
       <div className="relative">
@@ -18,12 +21,12 @@ function MainWeatherDashboard() {
         <div className=" w-full  px-8 absolute grid grid-cols-1 h-full top-8">
           <div className="text-center sm:text-left sm:absolute sm:top-[50%]  sm:-translate-y-[100%] sm:left-5 sm:max-w-[50%]">
             <p className="font-semibold text-xl sm:text-2xl">
-              {cityName.split(" ")[0]}, {province}
+              {country ? `${cityName}, ${country}` : `${cityName}`}
             </p>
             <p className="text-sm text-stone-300">{formatDate(currentTime)}</p>
           </div>
           <img
-            src="icon-sunny.webp"
+            src={`icon-${weatherIcon}.webp`}
             alt="icon-sunny"
             className="h-24 w-24 absolute top-[50%] -translate-y-[50%] sm:-translate-y-[90%] sm:right-[50%] sm:translate-x-[180%] "
           />

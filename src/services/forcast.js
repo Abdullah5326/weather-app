@@ -1,19 +1,19 @@
-import { getCurrentCoords, getLocationByCoords } from "./reverseLocation";
+import { getCoordsByLocation, getCurrentCoords } from "./reverseLocation";
 
 async function getPosition(position) {
-  const coords = !position ? await getCurrentCoords() : null;
-  const userLocation = !position
-    ? await getLocationByCoords(coords)
-    : await getLocationByCoords(position);
-  const { name: cityName, state: province } = userLocation[0];
-  const latitude = !position ? [coords.lng] : [position.lat];
-  const longitude = !position ? [coords.lng] : [position.lng];
-  return { latitude, longitude, cityName, province };
+  const coords = await getCurrentCoords();
+  const userLocation = position ? await getCoordsByLocation(position) : null;
+  const { name: cityName, country } = !position
+    ? { name: "Current Location", country: null }
+    : userLocation;
+  const latitude = !position ? [coords.lat] : [userLocation.latitude];
+  const longitude = !position ? [coords.lng] : [userLocation.longitude];
+  return { latitude, longitude, cityName, country };
 }
 
 export async function getForcast(position) {
   try {
-    const { latitude, longitude, cityName, province } = await getPosition(
+    const { latitude, longitude, cityName, country } = await getPosition(
       position
     );
 
@@ -73,7 +73,7 @@ export async function getForcast(position) {
       weeklyWeatherCodes,
       hourlyWeatherCodes,
       cityName,
-      province,
+      country,
     };
     return newAppWeatherData;
   } catch (err) {
